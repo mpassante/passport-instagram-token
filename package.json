@@ -1,5 +1,5 @@
 {
-  "name": "passport-instagram-token",
+  "name": "passport-instagram-token-2",
   "version": "0.0.0-semantic-release",
   "description": "Passport strategy for authenticating with Instagram via OAuth2 access tokens",
   "main": "lib/index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ghaiklor/passport-instagram-token.git"
+    "url": "https://github.com/mpassante/passport-instagram-token.git"
   },
   "keywords": [
     "passport",
@@ -24,9 +24,9 @@
   "author": "ghaiklor",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/ghaiklor/passport-instagram-token/issues"
+    "url": "https://github.com/mpassante/passport-instagram-token/issues"
   },
-  "homepage": "https://github.com/ghaiklor/passport-instagram-token",
+  "homepage": "https://github.com/mpassante/passport-instagram-token",
   "dependencies": {
     "passport-oauth": "1.0.0"
   },

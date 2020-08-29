@@ -38,7 +38,7 @@ export default class InstagramTokenStrategy extends OAuth2Strategy {
     this.name = 'instagram-token';
     this._accessTokenField = options.accessTokenField || 'access_token';
     this._refreshTokenField = options.refreshTokenField || 'refresh_token';
-    this._profileURL = options.profileURL || 'https://api.instagram.com/v1/users/self';
+    this._profileURL = options.profileURL || 'https://graph.instagram.com/me?fields=id,username,account_type';
     this._clientSecret = options.clientSecret;
     this._enableProof = typeof options.enableProof === 'boolean' ? options.enableProof : true;
     this._passReqToCallback = options.passReqToCallback;
@@ -100,23 +100,17 @@ export default class InstagramTokenStrategy extends OAuth2Strategy {
       }
 
       try {
-        let json = JSON.parse(body);
-        json['id'] = json.data.id;
+        var json = JSON.parse(body);
 
-        let profile = {
-          provider: 'instagram',
-          id: json.id,
-          username: json.data.username,
-          displayName: json.data.full_name || '',
-          name: {
-            familyName: json.data.last_name || '',
-            givenName: json.data.first_name || ''
-          },
-          emails: [],
-          photos: [{value: json.data.profile_picture}],
-          _raw: body,
-          _json: json
-        };
+        var profile = { provider: "instagram" };
+        profile.id = json.id;
+        profile.accountType = json.account_type;
+        profile.username = json.username;
+
+        profile._raw = body;
+        profile._json = json;
+
+        done(null, profile);
 
         return done(null, profile);
       } catch (e) {
