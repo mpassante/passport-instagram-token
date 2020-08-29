@@ -110,8 +110,6 @@ export default class InstagramTokenStrategy extends OAuth2Strategy {
         profile._raw = body;
         profile._json = json;
 
-        done(null, profile);
-
         return done(null, profile);
       } catch (e) {
         return done(e);

@@ -1,5 +1,5 @@
 {
-  "name": "passport-instagram-token-2",
+  "name": "@mpassante/passport-instagram-token-2",
   "version": "3.0.0",
   "description": "Passport strategy for authenticating with Instagram via OAuth2 access tokens",
   "main": "lib/index.js",
@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/mpassante/passport-instagram-token.git"
+    "url": "git+https://github.com/mpassante/passport-instagram-token.git"
   },
   "keywords": [
     "passport",
@@ -54,5 +54,9 @@
   },
   "release": {
     "tag": "latest"
+  },
+  "directories": {
+    "lib": "lib",
+    "test": "test"
   }
 }
