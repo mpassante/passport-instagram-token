@@ -21,7 +21,7 @@ By plugging into Passport, Instagram authentication can be easily and unobtrusiv
 ## Installation
 
 ```shell
-npm install passport-instagram-token
+npm install @mpassante/passport-instagram-token-2
 ```
 
 ## Usage
