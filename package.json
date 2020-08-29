@@ -53,6 +53,6 @@
     "tag": "latest"
   },
   "release": {
-    "branch": "master"
+    "tag": "latest"
   }
 }
