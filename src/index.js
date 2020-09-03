@@ -1,6 +1,9 @@
 import crypto from 'crypto';
 import { OAuth2Strategy, InternalOAuthError } from 'passport-oauth';
 
+import axios from 'axios';
+import qs from 'qs';
+
 /**
  * `Strategy` constructor.
  * The Instagram authentication strategy authenticates requests by delegating to Instagram using OAuth2 access tokens.
@@ -36,12 +39,15 @@ export default class InstagramTokenStrategy extends OAuth2Strategy {
     super(options, verify);
 
     this.name = 'instagram-token';
-    this._accessTokenField = options.accessTokenField || 'access_token';
+    this._codeTokenField = options.accessTokenField || 'access_token';
     this._refreshTokenField = options.refreshTokenField || 'refresh_token';
     this._profileURL = options.profileURL || 'https://graph.instagram.com/me?fields=id,username,account_type';
     this._clientSecret = options.clientSecret;
+    this._clientId = options.clientID;
+    this._callbackURL = options.callbackURL;
     this._enableProof = typeof options.enableProof === 'boolean' ? options.enableProof : true;
     this._passReqToCallback = options.passReqToCallback;
+    this._tokenURL = options.tokenURL;
   }
 
   /**
@@ -51,11 +57,31 @@ export default class InstagramTokenStrategy extends OAuth2Strategy {
    * @returns {*}
    */
   authenticate(req, options) {
-    let accessToken = (req.body && req.body[this._accessTokenField]) || (req.query && req.query[this._accessTokenField]);
+    let codeToken = (req.body && req.body[this._codeTokenField]) || (req.query && req.query[this._codeTokenField]);
     let refreshToken = (req.body && req.body[this._refreshTokenField]) || (req.query && req.query[this._refreshTokenField]);
 
-    if (!accessToken) return this.fail({message: `You should provide ${this._accessTokenField}`});
+    if (!codeToken) return this.error({message: `You should provide ${this._codeTokenField}`});
 
+    codeToken = codeToken.replace(/\#\_$/, "");
+
+
+    axios({
+        method: 'post',
+        url: this._tokenURL,
+        data: qs.stringify({
+          client_id: this._clientId,
+          client_secret: this._clientSecret,
+          redirect_uri: this._callbackURL,
+          grant_type: 'authorization_code',
+          code: codeToken
+        }),
+        headers: {
+          'content-type': 'application/x-www-form-urlencoded'
+        }
+      }).then((response) => {
+        let responseToken = response.data;
+        let accessToken = responseToken.access_token;
+        if (accessToken) {
     this._loadUserProfile(accessToken, (error, profile) => {
       if (error) return this.error(error);
 
@@ -72,7 +98,18 @@ export default class InstagramTokenStrategy extends OAuth2Strategy {
         this._verify(accessToken, refreshToken, profile, verified);
       }
     });
-  }
+        }
+        else {
+          return this.error({ message: "Error getting instagram auth token" });
+        }
+      })
+        .catch((response) => {
+          return this.error({ message: "Error getting instagram auth token: " + response.response.data.error_message });
+        });
+
+
+    }
+
 
   /**
    * Parse user profile
